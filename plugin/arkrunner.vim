@@ -3,10 +3,38 @@ command! -n=? -bar ARKStartApp :call s:startApp(<args>)
 command! -n=0 -bar ARKWinUpdate :call s:initArkApps()
 command! -n=? -bar ARKShowOutput :call s:showOutput(<args>)
 command! -n=? -bar ARKStopApp :call s:stopApp(<args>)
+command! -n=? -bar ARKShowDetail :call s:showDetails(<args>)
 
 let s:next_buffer_number = 0
 let s:ArkAppStatus = {}
 let s:Outputs = {'stdout': [], 'stderr': []}
+let s:Details = ''
+
+function! s:showDetails(...)
+    if a:0 > 0
+        let b:appName = a:1
+    else
+        let l:pos = getpos('.')
+        if l:pos[1] > 1
+            let l:line = getline('.')
+            if getline('1') != 'Stdout:'
+                let b:appName = split(l:line)[0]
+            endif
+        endif
+    endif
+
+    python showDetails(vim.eval('b:appName'))
+
+    let l:lines = []
+    for l:line in split(s:Details, '\n')
+        call add(l:lines, l:line)
+    endfor
+
+    setlocal modifiable
+    silent! exec 'normal! ggdG'
+    call setline('.', l:lines)
+    setlocal nomodifiable
+endfunction
 
 function! s:showOutput(...)
     if a:0 > 0
@@ -130,6 +158,7 @@ function! s:setMappings()
     nmap <buffer> r :ARKWinUpdate<CR>
     nmap <buffer> o :ARKShowOutput<CR>
     nmap <buffer> s :ARKStopApp<CR>
+    nmap <buffer> d :ARKShowDetail<CR>
 endfunction
 
 function! s:setCommonBufOptions()
@@ -143,6 +172,17 @@ function! s:setCommonBufOptions()
     setlocal nomodifiable
 
     setfiletype ark
+    syn keyword myOK RUNNING
+    syn keyword myERROR FAILED KILLED
+    syn keyword myUNKNOWN UNKNOWN
+    syn keyword myFINISHED FINISHED
+    hi kwGreen term=standout ctermfg=22 guifg=Green
+    hi kwRed term=standout ctermfg=88 guifg=DarkRed
+    hi kwBlue term=standout ctermfg=18 guifg=DarkBlue
+    hi def link myOK kwGreen
+    hi def link myERROR kwRed
+    hi def link myFINISHED kwBlue
+
 endfunction
 
 function! s:toggleArk()
@@ -199,7 +239,7 @@ import httplib
 
 
 def getCall(path, query=None, server=None):
-    fullpath = path + '?' + query if query is not None else path
+    fullpath = (path + '?' + query) if query is not None else path
     if server is None:
         conn = httplib.HTTPConnection("localhost:8888")
     else:
@@ -248,6 +288,16 @@ def stopApp(appName):
         print stop_resp.status, stop_resp.reason
 
 
+def showDetails(appName):
+    details_resp = getCall('/details', 'app=' + appName)
+    if details_resp.status != 200:
+        print 'Unable to get details from ARK: ', details_resp.status, details_resp.reason
+    else:
+        details = json.loads(details_resp.read())
+        details_pretty = json.dumps(details, sort_keys=True, indent=4, separators=(',',': '))
+        details_pretty = details_pretty.replace('"', '\\"',)
+        vim.command('let s:Details = "' + details_pretty + '"')
+
 def updateOutput(appName):
     details_resp = getCall('/details', 'app=' + appName)
     if details_resp.status != 200:
@@ -284,6 +334,7 @@ def updateOutput(appName):
             for l in stderr:
                 escaped_line = l.replace('"', '\\"',)
                 vim.command('call add(s:Outputs.stderr, "' + escaped_line + '")')
+
 
 EOF
 
