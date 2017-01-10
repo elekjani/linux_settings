@@ -1,9 +1,32 @@
+set fo=tcq
+
+highlight comment ctermfg=cyan
+
+highlight LiteralTabs ctermbg=darkgreen guibg=darkgreen
+match LiteralTabs /\s\	/
+highlight ExtraWhitespace ctermbg=darkgreen guibg=darkgreen
+match ExtraWhitespace /\s\+$/
+
+" Show me a ruler
+set ruler
+
+" Highlight search results
+set hlsearch
+
+" ****************************************************************************
+" Misc Stuff
+" ****************************************************************************
+filetype plugin indent on
+
+au BufRead,BufNewFile *.pp set filetype=puppet
+
+
 """"Vundle (win32: https://github.com/gmarik/Vundle.vim/wiki/Vundle-for-Windows)
 set nocompatible
 filetype off
 
-set rtp+=~/vimfiles/bundle/Vundle.vim
-let path='~/vimfiles/bundle'
+set rtp+=~/.vim/bundle/Vundle.vim
+let path='~/.vim/bundle'
 call vundle#begin(path)
 Plugin 'Vundle.vim'
 Plugin 'The-NERD-tree'
@@ -15,7 +38,7 @@ Plugin 'ctrlp.vim'
 Plugin 'Syntastic'
 Plugin 'bling/vim-airline'
 Plugin 'bling/vim-bufferline'
-Plugin 'mkitt/tabline'
+Plugin 'mkitt/tabline.vim'
 Plugin 'oplatek/Conque-Shell'
 Plugin 'EasyMotion'
 Plugin 'zoomwin'
@@ -25,28 +48,23 @@ Plugin 'bufkill.vim'
 Plugin 'derekwyatt/vim-scala'
 Plugin 'davidhalter/jedi-vim'
 Plugin 'Python-mode-klen'
-Plugin 'vim-json-bundle'
 call vundle#end()
 
 """"File types (win32: https://code.google.com/p/xmllint/)
 filetype plugin indent on
 au FileType xml exe ":silent %!xmllint --format -"
-au FileType json exe ":silent %!python -m json.tool"
-au FileType dosbatch exe ":nmap <leader>r :!\"%\"<CR>"
 
 """""Appearance
 set laststatus=2
 set relativenumber
 syntax enable
-set ts=4
-set sw=4
+set ts=2
+set sw=2
+set softtabstop=2
 set expandtab
-set cursorline
 
-set background=light
-if has('gui')
-    colorscheme solarized
-endif
+"set background=dark
+"colorscheme solarized
 
 set guifont=Consolas:h11
 set guioptions-=T
@@ -84,10 +102,8 @@ endif
 map <leader>T :tabnew<CR>
 map <leader>C :tabclose<CR>
 map <leader>D :BD<CR>
-map <leader>W :BW<CR>
 map <leader>t :TagbarToggle<CR>
-map <leader>p :tabp<CR>
-map <leader>a :ARKWin<CR>
+map <leader>r :!python %<CR>
 
 map <a-m> :if &go=~#'m'<Bar>set go-=m<Bar>else<Bar>set go+=m<Bar>endif<CR>
 
@@ -104,7 +120,7 @@ let g:syntastic_check_on_wq = 0
 
 """"Airline
 let g:airline#extensions#branch#enabled = 1
-let g:airline#extensions#bufferline#enabled = 0
+let g:airline#extensions#bufferline#enabled = 1
 let g:airline#extensions#syntastic#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_buffers = 1
@@ -121,7 +137,7 @@ let g:unite_enable_start_insert = 1
 let g:pymode = 1
 let g:pymode_run_bind = '<leader>R'
 let g:pymode_rope_completion = 0
-let g:pymode_lint = 1
+let g:pymode_lint = 0
 
 """"Jedi
 let g:jedi#goto_command = '<leader>jd'
