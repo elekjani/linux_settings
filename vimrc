@@ -107,6 +107,8 @@ map <leader>r :!python %<CR>
 
 map <a-m> :if &go=~#'m'<Bar>set go-=m<Bar>else<Bar>set go+=m<Bar>endif<CR>
 
+command! -nargs=* Cgrep execute "grep -R --include=*.[ch] <args>"
+
 "
 """"Syntastics
 set statusline+=%#warningmsg#
