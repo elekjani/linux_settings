@@ -83,6 +83,7 @@ set incsearch
 set showcmd
 set wildmode="list:longest"
 set wildmenu
+set path+=**
 
 "set shell=powershell
 "set shellcmdflag=-command
