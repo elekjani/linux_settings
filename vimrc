@@ -37,7 +37,6 @@ Plugin 'unimpaired.vim'
 Plugin 'ctrlp.vim'
 Plugin 'Syntastic'
 Plugin 'bling/vim-airline'
-Plugin 'bling/vim-bufferline'
 Plugin 'mkitt/tabline.vim'
 Plugin 'oplatek/Conque-Shell'
 Plugin 'EasyMotion'
@@ -83,7 +82,6 @@ set incsearch
 set showcmd
 set wildmode="list:longest"
 set wildmenu
-set path+=**
 
 "set shell=powershell
 "set shellcmdflag=-command
@@ -111,26 +109,31 @@ map <a-m> :if &go=~#'m'<Bar>set go-=m<Bar>else<Bar>set go+=m<Bar>endif<CR>
 command! -nargs=* Cgrep execute "grep -R --include=*.[ch] <args>"
 
 "
+"""NERDTree
+hi Directory ctermfg=white
+
 """"Syntastics
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
+let g:syntastic_auto_loc_list = 0
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 
 """"Airline
 let g:airline#extensions#branch#enabled = 1
-let g:airline#extensions#bufferline#enabled = 1
 let g:airline#extensions#syntastic#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#show_buffers = 1
 let g:airline#extensions#tabline#show_tabs = 1
-
-""""Bufferline
-let g:bufferline_echo = 0
+let g:airline_left_sep = '»'
+let g:airline_right_sep = '«'
+let g:airline_section_y = ''
+let g:airline_inactive_collapse=1
+let g:airline_skip_empty_sections = 1
+let g:airline_section_error = ''
+let g:airline_section_warning = ''
 
 """"Unite
 let g:unite_enable_start_insert = 1
@@ -150,3 +153,13 @@ let g:jedi#usages_command = '<leader>jn'
 
 """ARK specific
 let g:pymode_paths = ['C:/Users/ejnoele/git/eea_ark/apps/sli/src/python', 'C:/Users/ejnoele/work/ark_lib']
+
+"""Cscope
+set csqf=s-,c-,d-,i-,t-,e-,g-
+map <leader><leader>cc :cs find c <cword>
+map <leader><leader>cs :cs find s <cword>
+map <leader><leader>cd :cs find d <cword>
+map <leader><leader>ci :cs find i <cword>
+map <leader><leader>ct :cs find t <cword>
+map <leader><leader>cg :cs find g <cword>
+
