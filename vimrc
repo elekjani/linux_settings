@@ -51,7 +51,8 @@ call vundle#end()
 
 """"File types (win32: https://code.google.com/p/xmllint/)
 filetype plugin indent on
-au FileType xml exe ":silent %!xmllint --format -"
+"au FileType xml exe ":silent %!xmllint --format -"
+map <leader>l :silent %!xmllint --format -<CR>
 
 """""Appearance
 set laststatus=2
